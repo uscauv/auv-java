@@ -71,6 +71,19 @@ public class VisionUtil {
     }
 
     /**
+     * Convenience method to convert a BGR image to HSV
+     *
+     * @param img BGR image to be converted
+     * @return img in the HSV colorspace
+     */
+    public static Mat toHsv(Mat img) {
+        Mat hsv = img.clone();
+        Imgproc.cvtColor(img, hsv, Imgproc.COLOR_BGR2HSV);
+
+        return hsv;
+    }
+
+    /**
      * Performs canny edge detection on the provided grayscale image.
      *
      * @param img          a grayscale image
@@ -89,15 +102,6 @@ public class VisionUtil {
         Imgproc.Canny(dst, dst, lowThreshold, lowThreshold * 3, 3, false);
 
         return dst;
-    }
-
-    /**
-     * Calculate the distance between points a & b
-     *
-     * @return the distance as given by the distance formula: sqrt[(a.x - b.x)^2 + (a.y - b.y)^2]
-     */
-    public static double distance(Point a, Point b) {
-        return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
     }
 
     /**
@@ -143,6 +147,15 @@ public class VisionUtil {
             return rect.angle + 180;
         else
             return rect.angle + 90;
+    }
+
+    /**
+     * Calculate the distance between points a & b
+     *
+     * @return the distance as given by the distance formula: sqrt[(a.x - b.x)^2 + (a.y - b.y)^2]
+     */
+    public static double distance(Point a, Point b) {
+        return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
     }
 
     /**
