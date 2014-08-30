@@ -24,7 +24,17 @@ public class DirectionMarkerDetector {
         //clone the image so any modifications we make don't mess up other code trying to use this image
         Mat img = event.getImage().clone();
 
+        //threshold based on color
+        //TODO: fix these magic numbers
         Mat bin = VisionUtil.threshold(img, new VisionUtil.HsvThreshold(20, 175, 0, 255, 0, 255));
+
+        //find convex hulls in the color-thresholded image and fill them in to make the AND result nicer
+        List<MatOfPoint> colorContours = new ArrayList<>();
+        Imgproc.findContours(bin, colorContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+        List<MatOfPoint> colorConvexHulls = VisionUtil.convexHulls(colorContours);
+        Imgproc.drawContours(bin, colorConvexHulls, -1, new Scalar(255), -1);
+        //we fill the convex hulls in in case part of the marker is obstructed, which will cause the obstructed part
+        // to be missing in the result obtained by AND'ing the canny result and the color result
 
         Mat canny = VisionUtil.canny(img, 50);
 
