@@ -70,9 +70,9 @@ public class DirectionMarkerDetector {
         //draw the contours back onto the original image for visualization purposes
         Imgproc.drawContours(hullImg, hulls, -1, new Scalar(255), -1);
 
-        Core.bitwise_and(bin, hullImg, bin);
+        img.setTo(new Scalar(0, 102, 255), hullImg);
 
-        Seabee.getInstance().post(new DirectionMarkerImageOutputEvent(bin));
+        Seabee.getInstance().post(new DirectionMarkerImageOutputEvent(img));
 
         long end = System.currentTimeMillis();
 
