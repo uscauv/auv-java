@@ -24,6 +24,8 @@ public class DirectionMarkerDetector {
         //clone the image so any modifications we make don't mess up other code trying to use this image
         Mat img = event.getImage().clone();
 
+        Mat bin = VisionUtil.threshold(img, new VisionUtil.HsvThreshold(20, 175, 0, 255, 0, 255));
+
         Mat canny = VisionUtil.canny(img, 50);
 
         //find contours in the image after first processing it with Canny edge detection
@@ -52,10 +54,14 @@ public class DirectionMarkerDetector {
         }
         hulls.removeAll(contoursToBeRemoved);
 
-        //draw the contours back onto the original image for visualization purposes
-        Imgproc.drawContours(img, hulls, -1, new Scalar(0, 255, 0), -1);
+        Mat hullImg = Mat.zeros(bin.size(), bin.type());
 
-        Seabee.getInstance().post(new DirectionMarkerImageOutputEvent(img));
+        //draw the contours back onto the original image for visualization purposes
+        Imgproc.drawContours(hullImg, hulls, -1, new Scalar(255), -1);
+
+        Core.bitwise_and(bin, hullImg, bin);
+
+        Seabee.getInstance().post(new DirectionMarkerImageOutputEvent(bin));
     }
 
     private double scoreContour(MatOfPoint contour) {
