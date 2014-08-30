@@ -86,6 +86,10 @@ public class DirectionMarkerDetector {
         //the marker is 6 inches by 4 feet so the ratio of long : short side is 8
         double ratioScore = 1 / Math.abs((longerSide / shorterSide) - 8);
 
+        if (Imgproc.contourArea(contour) < 100) {
+            return 0;
+        }
+
         return ratioScore;
     }
 
