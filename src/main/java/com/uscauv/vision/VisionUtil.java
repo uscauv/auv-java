@@ -1,9 +1,7 @@
 package com.uscauv.vision;
 
-import org.opencv.core.Core;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.Scalar;
+import org.opencv.core.*;
+import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
 
@@ -64,5 +62,23 @@ public class VisionUtil {
         Core.bitwise_and(valBin, bin, bin);
 
         return bin;
+    }
+
+    public static Mat canny(Mat img, double lowThreshold) {
+        Mat dst = new Mat();
+
+        // reduce noise with a kernel 3x3
+        Imgproc.blur(img, dst, new Size(3, 3));
+
+        //canny recommends that the high threshold be 3 times the low threshold
+        //the kernel size is 3 as defined above
+        //L2gradient is false per the default
+        Imgproc.Canny(dst, dst, lowThreshold, lowThreshold * 3, 3, false);
+
+        return dst;
+    }
+
+    public static double distance(Point a, Point b) {
+        return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
     }
 }
