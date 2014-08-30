@@ -65,12 +65,10 @@ public class DirectionMarkerDetector {
         }
         hulls.removeAll(contoursToBeRemoved);
 
-        Mat hullImg = Mat.zeros(bin.size(), bin.type());
-
-        //draw the contours back onto the original image for visualization purposes
-        Imgproc.drawContours(hullImg, hulls, -1, new Scalar(255), -1);
-
-        img.setTo(new Scalar(0, 102, 255), hullImg);
+        //fill in the hulls with Blaze Orange
+        Imgproc.drawContours(img, hulls, -1, new Scalar(0, 102, 255), -1);
+        //draw green outlines so we know it actually detected it
+        Imgproc.drawContours(img, hulls, -1, new Scalar(0, 255, 0), 2);
 
         Seabee.getInstance().post(new DirectionMarkerImageOutputEvent(img));
 
