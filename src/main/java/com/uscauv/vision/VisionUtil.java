@@ -4,6 +4,7 @@ import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Common processes to apply to images to aid in analyzing camera images.
@@ -80,5 +81,21 @@ public class VisionUtil {
 
     public static double distance(Point a, Point b) {
         return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
+    }
+
+    public static List<MatOfPoint> convexHulls(List<MatOfPoint> contours) {
+        List<MatOfPoint> hulls = new ArrayList<>();
+        for (MatOfPoint contour : contours) {
+            MatOfInt hullInts = new MatOfInt();
+            Imgproc.convexHull(contour, hullInts);
+            List<Point> hull = new ArrayList<>();
+
+            for (int idx : hullInts.toArray()) {
+                hull.add(contour.toArray()[idx]);
+            }
+
+            hulls.add(new MatOfPoint(hull.toArray(new Point[hull.size()])));
+        }
+        return hulls;
     }
 }

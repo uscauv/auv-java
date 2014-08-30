@@ -27,19 +27,21 @@ public class DirectionMarkerDetector {
         List<MatOfPoint> contours = new ArrayList<>();
         Imgproc.findContours(canny, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
+        List<MatOfPoint> hulls = VisionUtil.convexHulls(contours);
+
         List<MatOfPoint> contoursToBeRemoved = new ArrayList<>();
-        for (MatOfPoint contour : contours) {
-            double score = scoreContour(contour);
+        for (MatOfPoint hull : hulls) {
+            double score = scoreContour(hull);
             if (score < 1 || Double.isNaN(score)) {
-                contoursToBeRemoved.add(contour);
+                contoursToBeRemoved.add(hull);
             } else {
                 System.out.println("Contour with score " + score);
-                Core.putText(img, "S: " + score, contour.toArray()[0], Core.FONT_HERSHEY_PLAIN, 1, new Scalar(0, 255, 0));
+                Core.putText(img, "S: " + score, hull.toArray()[0], Core.FONT_HERSHEY_PLAIN, 1, new Scalar(0, 255, 0));
             }
         }
-        contours.removeAll(contoursToBeRemoved);
+        hulls.removeAll(contoursToBeRemoved);
 
-        Imgproc.drawContours(img, contours, -1, new Scalar(0, 255, 0), -1);
+        Imgproc.drawContours(img, hulls, -1, new Scalar(0, 255, 0), -1);
 
         Highgui.imwrite("canny.png", img);
     }
@@ -50,6 +52,7 @@ public class DirectionMarkerDetector {
         double shorterSide = Math.min(rect.size.width, rect.size.height);
         double longerSide = Math.max(rect.size.width, rect.size.height);
 
+        //the marker is 6 inches by 4 feet so the ratio of long : short side is 8
         double ratioScore = 1 / Math.abs((longerSide / shorterSide) - 8);
 
         return ratioScore;
