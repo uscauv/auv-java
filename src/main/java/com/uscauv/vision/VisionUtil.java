@@ -65,6 +65,13 @@ public class VisionUtil {
         return bin;
     }
 
+    /**
+     * Performs canny edge detection on the provided grayscale image.
+     *
+     * @param img          a grayscale image
+     * @param lowThreshold the threshold for the canny operation
+     * @return a binary image containing the edges found by the canny detector
+     */
     public static Mat canny(Mat img, double lowThreshold) {
         Mat dst = new Mat();
 
@@ -79,19 +86,38 @@ public class VisionUtil {
         return dst;
     }
 
+    /**
+     * Calculate the distance between points a & b
+     *
+     * @return the distance as given by the distance formula: sqrt[(a.x - b.x)^2 + (a.y - b.y)^2]
+     */
     public static double distance(Point a, Point b) {
         return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
     }
 
+    /**
+     * Convenience method to get a list of convex hulls from list of contours
+     *
+     * @param contours the contours that should be turned into convex hulls
+     * @return a list of convex hulls that match each contour
+     */
     public static List<MatOfPoint> convexHulls(List<MatOfPoint> contours) {
         List<MatOfPoint> hulls = new ArrayList<>();
         for (MatOfPoint contour : contours) {
             MatOfInt hullInts = new MatOfInt();
             Imgproc.convexHull(contour, hullInts);
+
+            //hullInts is a list of integers corresponding to the indices of points that make up the convex hull of the contour
+
             List<Point> hull = new ArrayList<>();
 
+            Point[] contourArr = contour.toArray();
+
+            //here we create a new array of points containing only the points that are part of the convex hull and convert that
+            // into a MatOfPoint representing the convex hull
+
             for (int idx : hullInts.toArray()) {
-                hull.add(contour.toArray()[idx]);
+                hull.add(contourArr[idx]);
             }
 
             hulls.add(new MatOfPoint(hull.toArray(new Point[hull.size()])));
