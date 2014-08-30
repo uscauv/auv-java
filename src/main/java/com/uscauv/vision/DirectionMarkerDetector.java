@@ -19,6 +19,7 @@ public class DirectionMarkerDetector {
 
     @Subscribe
     public void onImage(BottomCameraImageEvent event) {
+        long start = System.currentTimeMillis();
         System.out.println("DirectionMarkerDetector got image");
 
         //clone the image so any modifications we make don't mess up other code trying to use this image
@@ -72,6 +73,10 @@ public class DirectionMarkerDetector {
         Core.bitwise_and(bin, hullImg, bin);
 
         Seabee.getInstance().post(new DirectionMarkerImageOutputEvent(bin));
+
+        long end = System.currentTimeMillis();
+
+        System.out.println("Took " + (end - start) + "ms to complete detection");
     }
 
     private double scoreContour(MatOfPoint contour) {
