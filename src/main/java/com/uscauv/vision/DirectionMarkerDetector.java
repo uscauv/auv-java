@@ -24,11 +24,14 @@ public class DirectionMarkerDetector {
 
         Mat canny = VisionUtil.canny(img, 50);
 
+        //find contours in the image after first processing it with Canny edge detection
         List<MatOfPoint> contours = new ArrayList<>();
         Imgproc.findContours(canny, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
+        //find the convex hulls of those edges in case part of the marker is blocked or eroded and is not a nice rectangle
         List<MatOfPoint> hulls = VisionUtil.convexHulls(contours);
 
+        //remove the detected convex hulls if their score is below a certain threshold
         List<MatOfPoint> contoursToBeRemoved = new ArrayList<>();
         for (MatOfPoint hull : hulls) {
             double score = scoreContour(hull);
@@ -37,10 +40,17 @@ public class DirectionMarkerDetector {
             } else {
                 System.out.println("Contour with score " + score);
                 Core.putText(img, "S: " + score, hull.toArray()[0], Core.FONT_HERSHEY_PLAIN, 1, new Scalar(0, 255, 0));
+
+                RotatedRect rect = Imgproc.minAreaRect(new MatOfPoint2f(hull.toArray()));
+                Point p = rect.center;
+                p.x += 50;
+                p.y -= 20;
+                Core.putText(img, VisionUtil.angle(rect) + "deg", p, Core.FONT_HERSHEY_PLAIN, 1, new Scalar(0, 0, 255));
             }
         }
         hulls.removeAll(contoursToBeRemoved);
 
+        //draw the contours back onto the original image for visualization purposes
         Imgproc.drawContours(img, hulls, -1, new Scalar(0, 255, 0), -1);
 
         Highgui.imwrite("canny.png", img);

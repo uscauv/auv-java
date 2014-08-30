@@ -124,4 +124,11 @@ public class VisionUtil {
         }
         return hulls;
     }
+
+    public static double angle(RotatedRect rect) {
+        if (rect.size.width < rect.size.height)
+            return rect.angle + 180;
+        else
+            return rect.angle + 90;
+    }
 }
