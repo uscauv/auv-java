@@ -1,6 +1,7 @@
 package com.uscauv;
 
 import com.uscauv.events.image.BottomCameraImageEvent;
+import com.uscauv.events.image.ForwardCameraImageEvent;
 import com.uscauv.visualization.Gui;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -22,16 +23,25 @@ public class Main {
 
         Scanner scanner = new Scanner(System.in);
 
-        Mat src = Highgui.imread("vision-samples/path_marker_generated.jpg", Highgui.CV_LOAD_IMAGE_COLOR);
+        Mat bottomSrc = Highgui.imread("vision-samples/path_marker_generated.jpg", Highgui.CV_LOAD_IMAGE_COLOR);
+        Mat forwardSrc = Highgui.imread("vision-samples/gate_vertical_generated.jpg", Highgui.CV_LOAD_IMAGE_COLOR);
 
-        BottomCameraImageEvent event = new BottomCameraImageEvent(src);
-        Seabee.getInstance().post(event);
+        BottomCameraImageEvent bottomEvent = new BottomCameraImageEvent(bottomSrc);
+        ForwardCameraImageEvent forwardEvent = new ForwardCameraImageEvent(forwardSrc);
+
+        Seabee.getInstance().post(bottomEvent);
+        Seabee.getInstance().post(forwardEvent);
 
         while (scanner.hasNextLine()) {
-            src = Highgui.imread("vision-samples/path_marker_generated.jpg", Highgui.CV_LOAD_IMAGE_COLOR);
-            event = new BottomCameraImageEvent(src);
+            bottomSrc = Highgui.imread("vision-samples/path_marker_generated.jpg", Highgui.CV_LOAD_IMAGE_COLOR);
+            bottomEvent = new BottomCameraImageEvent(bottomSrc);
 
-            Seabee.getInstance().post(event);
+            forwardSrc = Highgui.imread("vision-samples/gate_vertical_generated.jpg", Highgui.CV_LOAD_IMAGE_COLOR);
+            forwardEvent = new ForwardCameraImageEvent(forwardSrc);
+
+            Seabee.getInstance().post(bottomEvent);
+            Seabee.getInstance().post(forwardEvent);
+
             scanner.nextLine();
         }
     }

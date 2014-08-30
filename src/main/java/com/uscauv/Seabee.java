@@ -2,6 +2,7 @@ package com.uscauv;
 
 import com.google.common.eventbus.EventBus;
 import com.uscauv.vision.DirectionMarkerDetector;
+import com.uscauv.vision.GateDetector;
 
 /**
  * Seabee is the main class for our robot. It holds on to a common {@link EventBus} that allows components to
@@ -30,6 +31,7 @@ public class Seabee {
      */
     private Seabee() {
         register(new DirectionMarkerDetector());
+        register(new GateDetector());
     }
 
     /**

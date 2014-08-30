@@ -7,6 +7,7 @@ public class Gui {
 
     public static void init() {
         new DirectionMarkerWindow();
+        new GateWindow();
     }
 
 }
