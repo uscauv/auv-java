@@ -65,6 +65,13 @@ public class GateDetector {
             left = tmp;
         }
 
+        double confidence = scorePair(left, right);
+        System.out.println("Confidence this is a gate: " + confidence);
+        if (confidence < 80) {
+            Seabee.getInstance().post(new GateDetectionImageOutputEvent(img));
+            return;
+        }
+
         //convert the RotatedRects into other forms for use in other methods later
         Point[] rightPoints = new Point[4];
         Point[] leftPoints = new Point[4];
@@ -78,9 +85,6 @@ public class GateDetector {
         //draw the right side as green and left as red
         Imgproc.drawContours(img, Arrays.asList(rightPointsMat), -1, new Scalar(0, 255, 0), -1);
         Imgproc.drawContours(img, Arrays.asList(leftPointsMat), -1, new Scalar(0, 0, 255), -1);
-
-        double confidence = scorePair(left, right);
-        System.out.println("Confidence this is a gate: " + confidence);
 
         Seabee.getInstance().post(new GateDetectionImageOutputEvent(img));
         long end = System.currentTimeMillis();
@@ -112,18 +116,23 @@ public class GateDetector {
         double desiredSpaceBetween = Math.max(left.size.height, left.size.width) * 2.5;
 
         //score based on the distance between the two sides
-        double spaceScore = 1 / Math.abs((left.center.x - left.center.y) - desiredSpaceBetween);
+        double spaceScore = Math.abs(Math.abs(left.center.x - right.center.x) - desiredSpaceBetween);
+        spaceScore = 100 - .5 * Math.abs(spaceScore);
 
         //score based on parallel-ity of the two sides
-        double parallelScore = 1 / Math.abs(VisionUtil.angle(left) - VisionUtil.angle(right));
+        double parallelScore = Math.abs(VisionUtil.angle(left) - VisionUtil.angle(right));
+        parallelScore = 100 - Math.abs(parallelScore);
 
         //score based on the similarity in sizes
-        double samenessScore = 1 / Math.abs(Math.max(left.size.height, left.size.width) - Math.max(right.size.width, right.size.width));
+        double samenessScore = Math.abs(Math.max(left.size.height, left.size.width) - Math.max(right.size.height, right.size.width));
+        samenessScore = 100 - Math.abs(samenessScore);
 
+        //score based on being located in the same spot on the Y-axis
+        double sameYScore = Math.abs(left.center.y - right.center.y);
+        sameYScore = 100 - Math.abs(sameYScore);
 
-        //calculate the score taking different ranking priorities into account
-        //space between is the highest ranking criteria, then parallelism then same size
-        return Math.pow(spaceScore, 3) + Math.pow(parallelScore, 2) + samenessScore;
+        //calculate the total score by averaging all the other scores
+        return (spaceScore + parallelScore + sameYScore + samenessScore) / 4;
     }
 
 }
