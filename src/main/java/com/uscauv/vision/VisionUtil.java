@@ -1,8 +1,13 @@
 package com.uscauv.vision;
 
 import org.opencv.core.*;
+import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -125,10 +130,39 @@ public class VisionUtil {
         return hulls;
     }
 
+    /**
+     * Produce a more useful angle from a rotated rect. This format only exists to make more sense to the programmer or
+     * a user watching the output. The algorithm for transforming the angle is to add 180 if the width < height or
+     * otherwise add 90 to the raw OpenCV angle.
+     *
+     * @param rect rectangle to get angle from
+     * @return the formatted angle
+     */
     public static double angle(RotatedRect rect) {
         if (rect.size.width < rect.size.height)
             return rect.angle + 180;
         else
             return rect.angle + 90;
+    }
+
+    /**
+     * Convert a Mat to a Java BufferedImage for display
+     *
+     * @param img image to convert
+     * @return BufferedImage to display (for example in a JLabel)
+     */
+    public static BufferedImage getBufferedImage(Mat img) {
+        MatOfByte matOfByte = new MatOfByte();
+        Highgui.imencode(".jpg", img, matOfByte);
+        byte[] byteArray = matOfByte.toArray();
+        BufferedImage bufImage;
+        try {
+            InputStream in = new ByteArrayInputStream(byteArray);
+            bufImage = ImageIO.read(in);
+            return bufImage;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

@@ -1,9 +1,10 @@
 package com.uscauv.vision;
 
 import com.google.common.eventbus.Subscribe;
+import com.uscauv.Seabee;
 import com.uscauv.events.image.BottomCameraImageEvent;
+import com.uscauv.events.visualization.DirectionMarkerImageOutputEvent;
 import org.opencv.core.*;
-import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
@@ -20,7 +21,8 @@ public class DirectionMarkerDetector {
     public void onImage(BottomCameraImageEvent event) {
         System.out.println("DirectionMarkerDetector got image");
 
-        Mat img = event.getImage();
+        //clone the image so any modifications we make don't mess up other code trying to use this image
+        Mat img = event.getImage().clone();
 
         Mat canny = VisionUtil.canny(img, 50);
 
@@ -53,7 +55,7 @@ public class DirectionMarkerDetector {
         //draw the contours back onto the original image for visualization purposes
         Imgproc.drawContours(img, hulls, -1, new Scalar(0, 255, 0), -1);
 
-        Highgui.imwrite("canny.png", img);
+        Seabee.getInstance().post(new DirectionMarkerImageOutputEvent(img));
     }
 
     private double scoreContour(MatOfPoint contour) {
