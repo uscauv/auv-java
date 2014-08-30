@@ -8,6 +8,8 @@ import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -45,32 +47,42 @@ public class GateDetector {
         //find the convex hulls of those edges in case part of the marker is blocked or eroded and is not a nice rectangle
         List<MatOfPoint> hulls = VisionUtil.convexHulls(contours);
 
-        //remove the detected convex hulls if their score is below a certain threshold
-        List<MatOfPoint> contoursToBeRemoved = new ArrayList<>();
-        for (MatOfPoint hull : hulls) {
-            double score = scoreContour(hull);
-            if (score < 1 || Double.isNaN(score)) {
-                contoursToBeRemoved.add(hull);
-            } else {
-                System.out.println("Contour with score " + score);
-                Core.putText(img, "S: " + score, hull.toArray()[0], Core.FONT_HERSHEY_PLAIN, 1, new Scalar(0, 255, 0));
+        Collections.sort(hulls, (a, b) -> scoreContour(a) < scoreContour(b) ? 1 : -1);
 
-                RotatedRect rect = Imgproc.minAreaRect(new MatOfPoint2f(hull.toArray()));
-                Point p = rect.center;
-                p.x += 50;
-                p.y -= 20;
-                Core.putText(img, VisionUtil.angle(rect) + "deg", p, Core.FONT_HERSHEY_PLAIN, 1, new Scalar(0, 0, 255));
-            }
+        //give up if we didn't detect at least two candidates
+        if (hulls.size() < 2) {
+            return;
         }
-        hulls.removeAll(contoursToBeRemoved);
 
-        //fill in the hulls with Blaze Orange
-        Imgproc.drawContours(img, hulls, -1, new Scalar(0, 102, 255), -1);
-        //draw green outlines so we know it actually detected it
-        Imgproc.drawContours(img, hulls, -1, new Scalar(0, 255, 0), 2);
+        //get the two highest scoring candidates
+        RotatedRect right = Imgproc.minAreaRect(new MatOfPoint2f(hulls.get(1).toArray()));
+        RotatedRect left = Imgproc.minAreaRect(new MatOfPoint2f(hulls.get(0).toArray()));
+
+        //we got the right and left mixed up, swap them
+        if (right.center.x < left.center.x) {
+            RotatedRect tmp = right;
+            right = left;
+            left = tmp;
+        }
+
+        //convert the RotatedRects into other forms for use in other methods later
+        Point[] rightPoints = new Point[4];
+        Point[] leftPoints = new Point[4];
+        right.points(rightPoints);
+        left.points(leftPoints);
+        MatOfPoint rightPointsMat = new MatOfPoint();
+        MatOfPoint leftPointsMat = new MatOfPoint();
+        rightPointsMat.fromArray(rightPoints);
+        leftPointsMat.fromArray(leftPoints);
+
+        //draw the right side as green and left as red
+        Imgproc.drawContours(img, Arrays.asList(rightPointsMat), -1, new Scalar(0, 255, 0), -1);
+        Imgproc.drawContours(img, Arrays.asList(leftPointsMat), -1, new Scalar(0, 0, 255), -1);
+
+        double confidence = scorePair(left, right);
+        System.out.println("Confidence this is a gate: " + confidence);
 
         Seabee.getInstance().post(new GateDetectionImageOutputEvent(img));
-
         long end = System.currentTimeMillis();
 
         System.out.println("Took " + (end - start) + "ms to complete detection");
@@ -85,11 +97,33 @@ public class GateDetector {
         //the orange tape marker is 3 inches by 4 feet so the ratio of long : short side is 16
         double ratioScore = 1 / Math.abs((longerSide / shorterSide) - 16);
 
-        if (Imgproc.contourArea(contour) < 100) {
+        double score = ratioScore + Imgproc.contourArea(contour);
+
+        if (Imgproc.contourArea(contour) < 500) {
             return 0;
         }
 
-        return ratioScore;
+        return score;
+    }
+
+    private double scorePair(RotatedRect left, RotatedRect right) {
+        //calculate the space in pixels that should be between each side
+        //the actual dimension is 10 feet, so the space should be 2.5x the height (longer dimension)
+        double desiredSpaceBetween = Math.max(left.size.height, left.size.width) * 2.5;
+
+        //score based on the distance between the two sides
+        double spaceScore = 1 / Math.abs((left.center.x - left.center.y) - desiredSpaceBetween);
+
+        //score based on parallel-ity of the two sides
+        double parallelScore = 1 / Math.abs(VisionUtil.angle(left) - VisionUtil.angle(right));
+
+        //score based on the similarity in sizes
+        double samenessScore = 1 / Math.abs(Math.max(left.size.height, left.size.width) - Math.max(right.size.width, right.size.width));
+
+
+        //calculate the score taking different ranking priorities into account
+        //space between is the highest ranking criteria, then parallelism then same size
+        return Math.pow(spaceScore, 3) + Math.pow(parallelScore, 2) + samenessScore;
     }
 
 }
