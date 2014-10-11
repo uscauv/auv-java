@@ -46,11 +46,24 @@ public class PathPlanner implements Subsystem {
 
     @Subscribe
     public void onPoseUpdated(PoseEvent event) {
-        //TODO: implement this later
+        //delegate to the other method so we don't have duplicated code
+        updateCurrentPose(event.getPose());
     }
 
     @Subscribe
     public void onPoseTargetSet(SetTargetEvent event) {
+        //delegate to the other method so we don't have duplicated code
+        setPoseTarget(event.getTargetPose());
+    }
+
+    //these 2 methods exist to support a more imperative/tightly coupled approach in certain situations
+    //where that might make more sense than using EventBus
+
+    public void updateCurrentPose(Pose pose) {
+        //TODO: implement this later
+    }
+
+    public void setPoseTarget(Pose target) {
         //TODO: implement this later
     }
 
