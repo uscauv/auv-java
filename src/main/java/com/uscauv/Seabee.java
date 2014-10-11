@@ -37,6 +37,8 @@ public class Seabee {
     private Seabee() {
         register(new DirectionMarkerDetector());
         register(new GateDetector());
+
+        registerSubsystem(PathPlanner.getInstance());
     }
 
     /**
