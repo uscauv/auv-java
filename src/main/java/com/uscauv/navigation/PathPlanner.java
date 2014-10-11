@@ -1,6 +1,9 @@
 package com.uscauv.navigation;
 
+import com.google.common.eventbus.Subscribe;
 import com.uscauv.Subsystem;
+import com.uscauv.events.navigation.PoseEvent;
+import com.uscauv.events.navigation.SetTargetEvent;
 
 /**
  * This class is responsible for taking a target Pose and outputting the required motions
@@ -38,6 +41,16 @@ public class PathPlanner implements Subsystem {
 
     @Override
     public void stop() {
+        //TODO: implement this later
+    }
+
+    @Subscribe
+    public void onPoseUpdated(PoseEvent event) {
+        //TODO: implement this later
+    }
+
+    @Subscribe
+    public void onPoseTargetSet(SetTargetEvent event) {
         //TODO: implement this later
     }
 
