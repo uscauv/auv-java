@@ -18,6 +18,18 @@ import java.util.List;
  */
 public class GateDetector {
 
+    private static GateDetector instance;
+
+    public static GateDetector getInstance() {
+        if (instance == null)
+            instance = new GateDetector();
+        return instance;
+    }
+
+    private GateDetector() {
+
+    }
+
     @Subscribe
     public void onImage(ForwardCameraImageEvent event) {
         long start = System.currentTimeMillis();

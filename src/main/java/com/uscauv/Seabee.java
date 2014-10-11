@@ -35,8 +35,8 @@ public class Seabee {
      * Don't let anyone instantiate Seabee, so there can only be one copy
      */
     private Seabee() {
-        register(new DirectionMarkerDetector());
-        register(new GateDetector());
+        register(DirectionMarkerDetector.getInstance());
+        register(GateDetector.getInstance());
 
         registerSubsystem(PathPlanner.getInstance());
     }

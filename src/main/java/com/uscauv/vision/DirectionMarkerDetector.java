@@ -17,6 +17,18 @@ import java.util.List;
  */
 public class DirectionMarkerDetector {
 
+    private static DirectionMarkerDetector instance;
+
+    public static DirectionMarkerDetector getInstance() {
+        if (instance == null)
+            instance = new DirectionMarkerDetector();
+        return instance;
+    }
+
+    private DirectionMarkerDetector() {
+
+    }
+
     @Subscribe
     public void onImage(BottomCameraImageEvent event) {
         long start = System.currentTimeMillis();
