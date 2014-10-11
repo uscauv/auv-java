@@ -19,9 +19,15 @@ public class Pose {
      */
     private Orientation orientation;
 
-    public Pose(Point3D position, Orientation orientation) {
+    /**
+     * @see com.uscauv.navigation.Pose.Velocity
+     */
+    private Velocity velocity;
+
+    public Pose(Point3D position, Orientation orientation, Velocity velocity) {
         this.position = position;
         this.orientation = orientation;
+        this.velocity = velocity;
     }
 
     /**
@@ -48,6 +54,14 @@ public class Pose {
 
     public void setOrientation(Orientation orientation) {
         this.orientation = orientation;
+    }
+
+    public Velocity getVelocity() {
+        return velocity;
+    }
+
+    public void setVelocity(Velocity velocity) {
+        this.velocity = velocity;
     }
 
 
@@ -104,6 +118,42 @@ public class Pose {
 
         public void setYaw(double yaw) {
             this.yaw = yaw;
+        }
+    }
+
+    /**
+     * Representation of the sub's current velocity.
+     * See other classes in this file for documentation on the various axes and sign conventions used.
+     */
+    public static class Velocity {
+        private double x;
+        private double y;
+        private double depth;
+
+        public Velocity(double x, double y, double depth) {
+            this.x = x;
+            this.y = y;
+            this.depth = depth;
+        }
+
+        public double getX() {
+            return x;
+        }
+
+        public double getY() {
+            return y;
+        }
+
+        public void setY(double y) {
+            this.y = y;
+        }
+
+        public double getDepth() {
+            return depth;
+        }
+
+        public void setDepth(double depth) {
+            this.depth = depth;
         }
     }
 }
