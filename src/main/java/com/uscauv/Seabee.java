@@ -1,6 +1,8 @@
 package com.uscauv;
 
 import com.google.common.eventbus.EventBus;
+import com.uscauv.controls.Imu;
+import com.uscauv.controls.Thrusters;
 import com.uscauv.navigation.PathPlanner;
 import com.uscauv.vision.DirectionMarkerDetector;
 import com.uscauv.vision.GateDetector;
@@ -39,6 +41,8 @@ public class Seabee {
         register(GateDetector.getInstance());
 
         registerSubsystem(PathPlanner.getInstance());
+        registerSubsystem(Imu.getInstance());
+        registerSubsystem(Thrusters.getInstance());
     }
 
     /**
