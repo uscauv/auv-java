@@ -3,20 +3,25 @@ package com.uscauv;
 /**
  * Interface that all Subsystems must implement in order for the main Seabee driver to automatically manage their states.
  */
-public interface Subsystem {
+public abstract class Subsystem {
 
-    public String getName();
+    private boolean isEnabled = false;
 
-    public default void start() {
+    public abstract String getName();
+
+    public void start() {
+        isEnabled = true;
+    }
+
+    public void stop() {
+        isEnabled = false;
+    }
+
+    public void init() {
 
     }
 
-    public default void stop() {
-
+    public boolean isEnabled() {
+        return isEnabled;
     }
-
-    public default void init() {
-
-    }
-
 }

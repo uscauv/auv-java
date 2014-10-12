@@ -9,7 +9,7 @@ import com.uscauv.events.navigation.SetTargetEvent;
  * This class is responsible for taking a target Pose and outputting the required motions
  * to achieve that target destination given continuous updates of the current position.
  */
-public class PathPlanner implements Subsystem {
+public class PathPlanner extends Subsystem {
 
     private static PathPlanner instance = null;
 
