@@ -6,6 +6,9 @@ import com.uscauv.navigation.Velocity;
 
 /**
  * Read data from the IMU and provide a position and orientation to the rest of the robot.
+ * <p>
+ * The IMU driver will run in its own thread and periodically post PoseEvent's to the main EventBus via Seabee#post
+ * for consumption in other parts of the program.
  */
 public class Imu extends Subsystem {
 
