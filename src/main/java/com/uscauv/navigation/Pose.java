@@ -121,39 +121,4 @@ public class Pose {
         }
     }
 
-    /**
-     * Representation of the sub's current velocity.
-     * See other classes in this file for documentation on the various axes and sign conventions used.
-     */
-    public static class Velocity {
-        private double x;
-        private double y;
-        private double depth;
-
-        public Velocity(double x, double y, double depth) {
-            this.x = x;
-            this.y = y;
-            this.depth = depth;
-        }
-
-        public double getX() {
-            return x;
-        }
-
-        public double getY() {
-            return y;
-        }
-
-        public void setY(double y) {
-            this.y = y;
-        }
-
-        public double getDepth() {
-            return depth;
-        }
-
-        public void setDepth(double depth) {
-            this.depth = depth;
-        }
-    }
 }
