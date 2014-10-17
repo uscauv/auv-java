@@ -13,7 +13,7 @@ public class Thrusters extends Subsystem {
 
     private static Thrusters instance;
 
-    public static Thrusters getInstance() {
+    public static synchronized Thrusters getInstance() {
         if (instance == null) {
             instance = new Thrusters();
         }
