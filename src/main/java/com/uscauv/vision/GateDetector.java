@@ -20,7 +20,7 @@ public class GateDetector {
 
     private static GateDetector instance;
 
-    public static GateDetector getInstance() {
+    public static synchronized GateDetector getInstance() {
         if (instance == null)
             instance = new GateDetector();
         return instance;

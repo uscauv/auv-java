@@ -12,7 +12,7 @@ public class BuoyDetector {
 
     private static BuoyDetector instance;
 
-    public static BuoyDetector getInstance() {
+    public static synchronized BuoyDetector getInstance() {
         if (instance == null) {
             instance = new BuoyDetector();
         }

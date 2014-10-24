@@ -19,7 +19,7 @@ public class DirectionMarkerDetector {
 
     private static DirectionMarkerDetector instance;
 
-    public static DirectionMarkerDetector getInstance() {
+    public static synchronized DirectionMarkerDetector getInstance() {
         if (instance == null)
             instance = new DirectionMarkerDetector();
         return instance;

@@ -14,7 +14,7 @@ public class Imu extends Subsystem {
 
     private static Imu instance;
 
-    public static Imu getInstance() {
+    public static synchronized Imu getInstance() {
         if (instance == null) {
             instance = new Imu();
         }
