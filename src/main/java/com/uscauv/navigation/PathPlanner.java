@@ -17,7 +17,7 @@ public class PathPlanner extends Subsystem {
 
     }
 
-    public static PathPlanner getInstance() {
+    public static synchronized PathPlanner getInstance() {
         if (instance == null)
             instance = new PathPlanner();
         return instance;
