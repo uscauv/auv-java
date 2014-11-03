@@ -10,7 +10,7 @@ import com.uscauv.navigation.Velocity;
  * The IMU driver will run in its own thread and periodically post PoseEvent's to the main EventBus via Seabee#post
  * for consumption in other parts of the program.
  */
-public class Imu extends Subsystem {
+public class Imu extends Subsystem implements Runnable {
 
     private static Imu instance;
 
@@ -23,6 +23,14 @@ public class Imu extends Subsystem {
 
     private Imu() {
 
+    }
+
+    private start(){
+
+    }
+
+    private run(){
+ 	//check for new info, then maybe sleep to prevent CPU usage
     }
 
     public Pose getLatestPose() {
@@ -39,5 +47,7 @@ public class Imu extends Subsystem {
     @Override
     public String getName() {
         return "IMU";
+	
+    private 
     }
 }
