@@ -9,13 +9,119 @@ public class MTCommMessage {
     private final byte busId = (byte) 0xFF;
 
     private byte messageId;
-    private byte length;
+    private byte length; //num of bytes in the "data" segment.
 
-    private byte[] extLength;
+    private byte[] extLength; //bytes in addition to the data segment (only used if "data" is 254 bytes long)
 
     private byte[] data;
 
     //TODO: implement construction process to fill in all of these fields
+
+    //NOTE: there are a TON of different types of messages. I've only got a handful listed here.
+
+    public void setGoToConfigMessage(){
+        /**
+        *Sets message variables to a Go To Config state message
+        */
+        this.messageId = (byte)0x30; //make sure this truncates correctly
+        this.data = new byte[]{}; // data is n/a for this message. dunno if this is what we want
+        this.length = 0;
+        this.extLength = null;
+    }
+
+    public void setGoToMeasurementMessage(){
+        /**
+        *Sets message variables to a Go To Measurement state message
+        */
+        this.messageId = (byte)0x10;
+        this.data = new byte[]{}; // n/a
+        this.length = 0;
+        this.extLength = null;
+    }
+
+    public void setResetMessage(){
+        /**
+        *Sets message variables to a device Reset message
+        */
+        this.messageId = (byte)0x40;
+        this.data = new byte[]{};
+        this.length = 0;
+        this.extLength = null;
+    }
+
+    public void setReqConfigurationMessage(){
+        /**
+        *Sets message variables to request a current Configuration message
+        */
+        this.messageId = (byte)0x0c;
+        this.data = new byte[]{};
+        this.length = 0;
+        this.extLength = null;
+    }
+
+    //TODO: data portion
+    public void setReqPeriodMessage(){
+        /**
+        *Sets message variables to request the current sample period (default is 10ms)
+        */
+        this.messageId = (byte)0x04;
+        this.data = new byte[]{};
+        this.length = 0;
+        this.extLength = null;
+    }
+
+    public void setSetPeriodMessage(byte[] period){
+        /**
+        *Sets message variables to set a new sample period (def: 10ms [1152 (0x0480)], min: 1.95ms [225 (0x00E1)], max: 10.0ms [1152 (0x0480)])
+        */
+        this.messageId = (byte)0x04;
+        if(period.length == 2){
+            this.data = period;
+        }
+        else{
+            System.out.println("Invalid array size passed into setSetPeriodMessage");
+        }
+        this.length = 2;
+        this.extLength = null;
+    }
+
+    public void setReqOutputModeMessage(){
+        /**
+        *Sets message variables to get the current output mode
+        */
+        this.messageId = (byte)0xd0;
+        this.data = new byte[]{};
+        this.length = 0;
+        this.extLength = null;
+    }
+
+    public void setSetOutputModeMessage(){
+        /**
+        *Sets message variables to set the current output mode
+        */
+        this.messageId = (byte)0xd0;
+        //need to implement this when we decide what sensor measurements we actually want
+    }
+
+    public void setReqOutputSettingsMessage(){
+        /**
+        *Sets message variables to get the current output settings
+        */
+        this.messageId = (byte)0xd2;
+        this.data = new byte[]{};
+        this.length = 0;
+        this.extLength = null;
+    }
+
+    public void setSetOutputSettingsMessage(){
+        /**
+        *Sets message variables to set the current output settings
+        */
+        this.messageId = (byte)0xd2;
+        //see setSetOutputModeMessage()
+        this.length = 4;
+        this.extLength = null;
+    }
 
     /**
      * Construct this message into a byte array in the format that the IMU expects
