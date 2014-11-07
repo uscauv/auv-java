@@ -15,8 +15,6 @@ public class MTCommMessage {
 
     private byte[] data;
 
-    //TODO: implement construction process to fill in all of these fields
-
     //NOTE: there are a TON of different types of messages. I've only got a handful listed here.
 
     public void setGoToConfigMessage(){
@@ -59,7 +57,6 @@ public class MTCommMessage {
         this.extLength = null;
     }
 
-    //TODO: data portion
     public void setReqPeriodMessage(){
         /**
         *Sets message variables to request the current sample period (default is 10ms)
@@ -95,11 +92,14 @@ public class MTCommMessage {
         this.extLength = null;
     }
 
-    public void setSetOutputModeMessage(){
+    public void setSetOutputModeMessage(){ //baudrate will set frequency of outputs
         /**
         *Sets message variables to set the current output mode
         */
         this.messageId = (byte)0xd0;
+        this.data = new byte[]{(byte)24, (byte)62}; //00011000 00011110
+        this.length - 2;
+        this.extLength = null;
         //need to implement this when we decide what sensor measurements we actually want
     }
 
@@ -113,12 +113,13 @@ public class MTCommMessage {
         this.extLength = null;
     }
 
-    public void setSetOutputSettingsMessage(){
+    //NOTE: bits 14-18 I'm not sure about.
+    public void setSetOutputSettingsMessage(){ //baudrate will set frequency of outputs
         /**
         *Sets message variables to set the current output settings
         */
         this.messageId = (byte)0xd2;
-        //see setSetOutputModeMessage()
+        this.data = new byte[]{(byte) 0, (byte) 7, (byte) 192, (byte) 96+26}; // 00000000 / 00000 XX X/XX 00 00 00 / 0 111 10 10
         this.length = 4;
         this.extLength = null;
     }
