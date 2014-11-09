@@ -92,6 +92,7 @@ public class MTCommMessage {
         this.extLength = null;
     }
 
+    //NOTE: This and some others (notably set OutputSettings) need gotoConfig state sent to MTFirst.
     public void setSetOutputModeMessage(){ //baudrate will set frequency of outputs
         /**
         *Sets message variables to set the current output mode

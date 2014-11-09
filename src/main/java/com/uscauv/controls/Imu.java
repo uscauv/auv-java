@@ -13,6 +13,8 @@ import com.uscauv.navigation.Velocity;
 public class Imu extends Subsystem implements Runnable {
 
     private static Imu instance;
+    String filePath;
+    bytes[] lastMessage;
 
     public static synchronized Imu getInstance() {
         if (instance == null) {
@@ -22,6 +24,7 @@ public class Imu extends Subsystem implements Runnable {
     }
 
     private Imu() {
+        FileReader usbFile = new FileReader(filePath); //when connected, opens /dev/seabee /dev/serial and /dev/ttyUSB0
 
     }
 
@@ -30,7 +33,13 @@ public class Imu extends Subsystem implements Runnable {
     }
 
     private run(){
- 	//check for new info, then maybe sleep to prevent CPU usage
+        byte[] messageBytes = parseMessage(fileReader);       //probably should add functionality to MTCommMessage to make this easy (getTimeStamp or something)
+        boolean newMessage = checkIfNewMessage(messageBytes);
+        if(newMessage){
+            lastMessage = messageBytes;
+            //post on EventBus and w.e else needs to updated.
+        }
+ 	    sleep(50); //default message frequency is once every 100 ms (100Hz)
     }
 
     public Pose getLatestPose() {
@@ -48,6 +57,11 @@ public class Imu extends Subsystem implements Runnable {
     public String getName() {
         return "IMU";
 	
-    private 
+    private byte[] parseMessage(FileReader fileReader){
+
+    }
+
+    private boolean checkIfNewMessage(byte[] messageBytes){
+
     }
 }
