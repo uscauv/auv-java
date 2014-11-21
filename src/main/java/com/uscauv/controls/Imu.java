@@ -13,7 +13,7 @@ import com.uscauv.navigation.Velocity;
 public class Imu extends Subsystem implements Runnable {
 
     private static Imu instance;
-    String filePath;
+    PrintWriter imuDriverFile;
     bytes[] lastMessage;
 
     public static synchronized Imu getInstance() {
@@ -24,12 +24,15 @@ public class Imu extends Subsystem implements Runnable {
     }
 
     private Imu() {
-        FileReader usbFile = new FileReader(filePath); //when connected, opens /dev/seabee /dev/serial and /dev/ttyUSB0
 
     }
 
     private start(){
-
+        if(filePath == null){
+            System.out.println("Please specify filepath for IMU driver");
+            return;
+        }
+        super.start();
     }
 
     private run(){
@@ -42,6 +45,15 @@ public class Imu extends Subsystem implements Runnable {
  	    sleep(50); //default message frequency is once every 100 ms (100Hz)
     }
 
+    public void setFilePath(String filePath){
+        try{
+        FileWriter file = new FileWriter(filePath);
+        this.imuDriverFile = new PrintWriter(file);
+    }catch(IOException ioe){
+        System.out.println("File error Imu: " + ioe.getMessage());
+    }
+    }
+
     public Pose getLatestPose() {
         //TODO: implement this
         return null;
@@ -52,6 +64,10 @@ public class Imu extends Subsystem implements Runnable {
     }
 
     //TODO: implement start/stop for this?
+
+    public void sendMessage(MTCommMessage message){
+
+    }
 
     @Override
     public String getName() {

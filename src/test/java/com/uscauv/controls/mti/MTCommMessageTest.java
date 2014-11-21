@@ -30,4 +30,9 @@ public class MTCommMessageTest {
 	}
 
 	//etc...
+
+	public static void main(String [] args){
+		Imu imu = Imu.getInstance();
+		
+	}
 }
